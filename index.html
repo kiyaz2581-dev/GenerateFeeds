@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feed Studio – Generator 9 Feed Konsisten</title>
+<style>
+:root{--red:#d9453d;--red2:#b32f2a;--ink:#1d1512;--mut:#7a6c66;--line:#e7ddd6;--bg:#f3ece4;--card:#fffdfb}
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:16px;min-height:100vh}
+.wrap{max-width:520px;margin:0 auto}
+.card{background:var(--card);border:2.5px solid var(--ink);border-radius:22px;padding:18px;box-shadow:0 6px 0 var(--ink)}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#ee5a50,#b32f2a);display:grid;place-items:center;color:#fff;font-size:24px}
+.head h1{font-size:22px;line-height:1}
+.head p{font-size:13px;color:var(--mut);margin-top:3px}
+.pill{margin-left:auto;font-size:12px;font-weight:600;color:var(--red);border:1.5px solid var(--red);border-radius:99px;padding:5px 10px;background:#fff1ef;white-space:nowrap}
+.step{display:flex;align-items:center;gap:8px;font-weight:700;margin:14px 0 8px;font-size:15px}
+.n{width:22px;height:22px;border-radius:7px;background:var(--red);color:#fff;font-size:13px;display:grid;place-items:center}
+.drop{border:2px dashed var(--red);border-radius:14px;padding:12px;display:flex;align-items:center;gap:14px;cursor:pointer;min-height:96px;background:#fff}
+.drop img{width:76px;height:76px;object-fit:cover;border-radius:10px;box-shadow:0 3px 8px #0003}
+.drop .ok{color:#1d8a3b;font-weight:700}
+.drop .hint{color:var(--mut);font-size:14px}
+input[type=text],input[type=password],select,textarea{width:100%;font:inherit;font-size:16px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+select{border-color:var(--red)}
+input:focus,select:focus,textarea:focus{outline:2px solid #d9453d55}
+.colors{display:flex;gap:12px}
+.colors label{position:relative;width:56px;height:56px;border-radius:14px;overflow:hidden;border:2px solid var(--line);box-shadow:0 2px 6px #0002;cursor:pointer}
+.colors label.first{border-color:var(--ink)}
+.colors input{position:absolute;inset:-10px;width:80px;height:80px;border:0;padding:0;cursor:pointer}
+.btn{width:100%;margin-top:18px;border:0;border-radius:14px;padding:16px;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(180deg,#e0524a,#b32f2a);box-shadow:0 4px 0 #7e1f1b;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #7e1f1b}
+.btn:disabled{opacity:.6;cursor:wait}
+.link{background:none;border:0;color:var(--mut);font-size:13px;text-decoration:underline;margin-top:12px;cursor:pointer;padding:0}
+.set{display:none;margin-top:10px;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#faf5f0}
+.set.open{display:block}
+.set label{display:block;font-size:12px;color:var(--mut);margin:8px 0 4px}
+.set small{display:block;font-size:12px;color:var(--mut);margin-top:6px;line-height:1.4}
+.msg{margin-top:14px;font-size:13px;line-height:1.45;color:var(--mut)}
+.msg.err{color:#b32f2a}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:20px}
+.tile{position:relative;aspect-ratio:var(--ar,1);background:#e9dfd6;border-radius:6px;overflow:hidden;display:grid;place-items:center;font-size:12px;color:var(--mut);text-align:center}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .sp{width:22px;height:22px;border:3px solid #cdbfb4;border-top-color:var(--red);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.tile .bar{position:absolute;left:0;right:0;bottom:0;display:flex;gap:4px;padding:4px;background:linear-gradient(transparent,#0008)}
+.tile .bar button{flex:1;font-size:11px;border:0;border-radius:6px;padding:5px 2px;background:#fffffff0;cursor:pointer}
+.sec{margin-top:24px}
+.sec h2{font-size:16px;margin-bottom:6px}
+.pr{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px;margin-top:8px;font-size:13px;line-height:1.45}
+.pr b{display:block;margin-bottom:4px}
+.pr button{margin-top:6px;font-size:12px;border:1.5px solid var(--ink);background:#fff;border-radius:8px;padding:5px 10px;cursor:pointer}
+.foot{text-align:center;font-size:12px;color:var(--mut);margin:20px 0 6px}
+
+.mbox{border:1.5px solid var(--line);border-radius:12px;background:#fff;max-height:340px;overflow-y:auto;margin-top:8px;-webkit-overflow-scrolling:touch}
+.mrow{padding:10px 12px;border-bottom:1px solid #f0e8e1;cursor:pointer}
+.mrow:last-child{border-bottom:0}
+.mrow.sel{background:#fff1ef;box-shadow:inset 4px 0 0 var(--red)}
+.mrow .t{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.mrow b{font-size:14px}
+.mrow .id{font-size:11px;color:var(--mut);word-break:break-all;margin-top:2px}
+.pb{font-size:12px;font-weight:700;border-radius:8px;padding:3px 8px;background:#efe6dd;white-space:nowrap}
+.pb.free{background:#d9f3e0;color:#1d7a3a}
+.tag{display:inline-block;font-size:10.5px;border-radius:6px;padding:2px 6px;margin:4px 4px 0 0;background:#f3ece4;color:var(--mut)}
+.tag.best{background:#ffe9a8;color:#7a5200;font-weight:700}
+.tag.warn{background:#ffe0dd;color:#b32f2a}
+.mtools{display:flex;gap:8px;margin-top:8px}
+.mtools input{flex:1;padding:9px 10px;font-size:14px}
+.mtools select{width:auto;padding:9px 8px;font-size:14px;border-color:var(--line)}
+.chk{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mut);margin-top:8px}
+.rec{margin-top:8px;font-size:13px;background:#fff7dc;border:1.5px solid #f0d98a;border-radius:10px;padding:8px 10px;line-height:1.4}
+.rec button{margin-left:6px;font-size:12px;border:1.5px solid var(--ink);background:#fff;border-radius:8px;padding:3px 8px;cursor:pointer}
+.ph{font-size:13px;font-weight:700;margin-top:10px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:9px 10px;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
+.chip b{display:block;font-size:13px;line-height:1.25}
+.chip span{display:block;font-size:11.5px;color:var(--mut);margin-top:3px}
+.chip.sel{border-color:var(--red);background:#fff1ef;box-shadow:inset 0 0 0 1px var(--red)}
+.chip.off{opacity:.45;cursor:not-allowed}
+.chip.free span{color:#1d7a3a;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="card">
+  <div class="head">
+   <div class="logo">⚡</div>
+   <div><h1>Feed Studio</h1><p>Isi info produk</p></div>
+   <span class="pill" id="pill">9 Feed Konsisten</span>
+  </div>
+
+  <div class="step"><span class="n">1</span>Foto Produk</div>
+  <label class="drop" id="drop">
+   <span class="hint" id="dropHint">Ketuk untuk upload foto produk</span>
+   <input type="file" id="file" accept="image/*" hidden>
+  </label>
+
+  <div class="step"><span class="n">2</span>Nama Brand / Produk</div>
+  <input type="text" id="brand" placeholder="mis. Dapur Bu Ratna" value="Dapur Bu Ratna">
+
+  <div class="step"><span class="n">3</span>Kategori</div>
+  <select id="cat">
+   <option>Makanan · Katering</option>
+   <option>Makanan · Kafe & Minuman</option>
+   <option>Fashion & Aksesoris</option>
+   <option>Kecantikan & Skincare</option>
+   <option>Jasa Profesional</option>
+   <option>Properti</option>
+   <option>Edukasi & Kursus</option>
+   <option>Kesehatan & Kebugaran</option>
+   <option>Produk Digital</option>
+  </select>
+
+  <div class="step"><span class="n">4</span>Warna Brand</div>
+  <div class="colors">
+   <label class="first"><input type="color" id="c1" value="#8a5a34"></label>
+   <label><input type="color" id="c2" value="#f0e2c8"></label>
+   <label><input type="color" id="c3" value="#c0573f"></label>
+  </div>
+
+  <div class="step"><span class="n">5</span>Ukuran & Jumlah Feed</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+   <select id="ratio" style="border-color:var(--line)">
+    <option value="1:1">1:1 · Feed persegi</option>
+    <option value="4:5">4:5 · Feed portrait</option>
+    <option value="9:16">9:16 · Story / Reels</option>
+    <option value="16:9">16:9 · Banner / Thumbnail</option>
+    <option value="3:4">3:4 · Poster (mirip A4)</option>
+   </select>
+   <select id="count" style="border-color:var(--line)">
+    <option value="1">1 feed</option><option value="3">3 feed</option><option value="6">6 feed</option><option value="9" selected>9 feed</option><option value="12">12 feed</option>
+   </select>
+  </div>
+  <div class="step"><span class="n">6</span>Info tambahan (opsional)</div>
+  <textarea id="extra" rows="2" placeholder="mis. nasi box mulai 25rb, pesan H-1, area Makassar, WA 08xx"></textarea>
+
+  <button class="btn" id="go">⚡ Generate 9 Feed</button>
+  <button class="link" id="tg">⚙ Pengaturan API key</button>
+  <div class="set" id="set">
+   <label>OpenRouter API key (dari openrouter.ai/keys)</label>
+   <input type="password" id="key" placeholder="sk-or-v1-..." autocomplete="off">
+   <label>Model gambar</label>
+   <div class="ph">⚡ Pilihan cepat (ketuk model)</div>
+   <div class="chips" id="chips"></div>
+   <div class="ph" style="margin-top:14px">Semua model</div>
+   <div class="rec" id="rec">Memuat daftar model…</div>
+   <div class="mtools"><input type="text" id="mq" placeholder="Cari model…"><select id="msort"><option value="price">Termurah</option><option value="name">Nama A–Z</option></select></div>
+   <label class="chk"><input type="checkbox" id="onlyRef" checked> Hanya model yang menerima foto produk</label>
+   <div class="mbox" id="mbox"></div>
+   <label>Model terpilih (atau ketik ID manual)</label>
+   <input type="text" id="model" value="google/gemini-2.5-flash-image" placeholder="author/nama-model">
+   <small id="mcount"></small>
+   <small>Key hanya disimpan di browser kamu dan dikirim langsung ke OpenRouter. Daftar model gambar dimuat otomatis di bawah; kredit OpenRouter terpakai tiap generate. Jangan bagikan file ini setelah key terisi. Tanpa key (atau kalau browser memblokir koneksi), halaman ini tetap membuat prompt siap salin untuk ditempel ke Gemini / ChatGPT.</small>
+  </div>
+  <div class="msg" id="msg"></div>
+ </div>
+
+ <div class="grid" id="grid"></div>
+ <div class="sec" id="prsec" style="display:none"><h2>Prompt feed</h2><div id="prs"></div></div>
+ <div class="foot">Feed Studio · hasil AI bisa berbeda tiap generate</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let photo=null; // {mime,data}
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+$('key').value=store.get('fs_or_key')||''; $('model').value=store.get('fs_or_model')||$('model').value;
+$('tg').onclick=()=>$('set').classList.toggle('open');
+$('key').onchange=()=>store.set('fs_or_key',$('key').value.trim());
+$('model').onchange=()=>store.set('fs_or_model',$('model').value.trim());
+
+function onFile(e){
+ const f=e.target.files[0]; if(!f) return;
+ const img=new Image(), url=URL.createObjectURL(f);
+ img.onload=()=>{ // resize to max 1024 to keep request small
+  const s=Math.min(1,1024/Math.max(img.width,img.height));
+  const c=document.createElement('canvas'); c.width=img.width*s; c.height=img.height*s;
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  const d=c.toDataURL('image/jpeg',.9);
+  photo={mime:'image/jpeg',data:d.split(',')[1]};
+  $('drop').innerHTML='<img src="'+d+'"><span class="ok">✓ Foto terupload</span><input type="file" id="file" accept="image/*" hidden>';
+  $('file').onchange=onFile; URL.revokeObjectURL(url);
+ };
+ img.src=url;
+}
+$('file').onchange=onFile;
+
+const CONCEPTS=[
+ ['Hero produk','Hero post: produk besar dan menggoda di tengah, headline singkat yang kuat, nama brand terlihat jelas.'],
+ ['Promo','Promo post: badge promo/penawaran spesial yang menonjol, produk sebagai fokus, tombol ajakan beli.'],
+ ['3 Keunggulan','Post keunggulan: 3 poin keunggulan produk dengan ikon sederhana di samping produk.'],
+ ['Katalog','Post katalog: tampilkan 3-4 varian/produk dalam layout rapi dengan label nama singkat.'],
+ ['Testimoni','Post testimoni: kartu kutipan pelanggan dengan bintang 5, foto produk sebagai latar atau pendamping.'],
+ ['Di balik layar','Post proses/behind the scenes: suasana pembuatan atau penyiapan produk, hangat dan autentik, ada teks singkat.'],
+ ['Cara pesan','Post cara pesan: 3 langkah bernomor (pilih, pesan, terima) dengan desain bersih dan produk kecil.'],
+ ['Tips / Edukasi','Post edukasi: satu tips atau fakta menarik yang relevan dengan kategori, tipografi besar dan jelas.'],
+ ['Ajakan akhir','Post penutup: ajakan pesan sekarang yang kuat, nama brand besar, area untuk kontak.'],
+ ['Detail produk','Post close-up detail: tampilan dekat produk yang menonjolkan tekstur, bahan, atau kualitas, dengan satu keterangan singkat.'],
+ ['Paket / Bundling','Post paket atau bundling: beberapa produk dikelompokkan menjadi satu penawaran hemat dengan label yang jelas.'],
+ ['Terima kasih','Post apresiasi pelanggan: ucapan terima kasih yang hangat dengan produk dan elemen brand yang sama.']
+];
+function buildPrompts(){
+ const n=+$('count').value||9, ratio=$('ratio').value, b=$('brand').value.trim()||'Brand', cat=$('cat').value, cols=[$('c1').value,$('c2').value,$('c3').value], ex=$('extra').value.trim();
+ const base=`Buat satu desain postingan Instagram feed (rasio ${ratio}, siap upload) untuk brand "${b}" (kategori: ${cat}). `+
+ `Gunakan produk pada foto terlampir sebagai objek utama tanpa mengubah wujud produknya. `+
+ `Palet warna brand wajib: utama ${cols[0]}, latar/netral ${cols[1]}, aksen ${cols[2]}. `+
+ `Gaya desain grafis profesional, modern, ${n>1?`konsisten dengan ${n-1} postingan lain di satu grid feed (font, bentuk, bingkai, dan tata cahaya sama). `:''}`+
+ `Semua teks dalam Bahasa Indonesia, ejaan benar, singkat, mudah dibaca, tidak terpotong. Jangan menambahkan logo atau merek palsu lain.`+
+ (ex?` Info yang boleh dipakai: ${ex}.`:' Jangan mengarang harga atau nomor kontak.');
+ return CONCEPTS.slice(0,n).map(([t,d])=>({t,p:base+' Konsep: '+d}));
+}
+const FALLBACK=[{id:'google/gemini-2.5-flash-image',name:'Google: Gemini 2.5 Flash Image',inp:['text','image'],exp:null,price:null,unit:null,tok:null}];
+let LIST=[],MODELS={};
+const est=m=>m.price==null?null:(m.unit==='megapixel'?m.price*1.05:m.price);
+function fmt(n){return n<0.01?n.toFixed(4).replace(/0+$/,'').replace(/\.$/,''):n.toFixed(3).replace(/0+$/,'').replace(/\.$/,'')}
+function priceText(m){
+ if(m.price!=null){ if(m.price===0) return ['GRATIS',true];
+  return ['$'+fmt(m.price)+(m.unit==='megapixel'?'/MP':'/gambar'),false]; }
+ if(m.tok) return [m.tok,false];
+ return [m.pdone?'harga: lihat OpenRouter':'memuat harga…',false];
+}
+function walk(o,out){ if(Array.isArray(o)){o.forEach(x=>walk(x,out))} else if(o&&typeof o==='object'){ if('billable' in o&&'cost_usd' in o) out.push(o); Object.values(o).forEach(v=>walk(v,out)); } }
+function render(){
+ renderPresets();
+ const q=$('mq').value.trim().toLowerCase(),only=$('onlyRef').checked,sort=$('msort').value,cur=$('model').value.trim();
+ let arr=LIST.filter(m=>(!only||m.inp.includes('image'))&&(!q||(m.name+' '+m.id).toLowerCase().includes(q)));
+ if(sort==='price') arr.sort((a,b)=>((est(a)??1e9)-(est(b)??1e9))||a.name.localeCompare(b.name)); else arr.sort((a,b)=>a.name.localeCompare(b.name));
+ const priced=LIST.filter(m=>(!only||m.inp.includes('image'))&&est(m)!=null).sort((a,b)=>est(a)-est(b));
+ const paid=priced.filter(m=>est(m)>0), free=priced.filter(m=>est(m)===0);
+ const best=paid[0];
+ $('rec').innerHTML=best?`Termurah berbayar: <b>${esc(best.name)}</b> (${priceText(best)[0]}).`+(free.length?` Ada ${free.length} model gratis (bisa segera dihapus OpenRouter).`:'')+` <button type="button" id="pickBest">Pilih termurah</button>`:(LIST.length?'Harga sedang dimuat…':'Daftar belum termuat.');
+ if(best) $('pickBest').onclick=()=>choose(best.id);
+ $('mbox').innerHTML=arr.length?arr.map(m=>{const [p,f]=priceText(m);
+  return `<div class="mrow${m.id===cur?' sel':''}" data-id="${esc(m.id)}"><div class="t"><b>${esc(m.name)}</b><span class="pb${f?' free':''}">${esc(p)}</span></div><div class="id">${esc(m.id)}</div>`+
+  (best&&m.id===best.id?'<span class="tag best">⭐ Termurah</span>':'')+
+  (m.inp.includes('image')?'<span class="tag">📷 terima foto</span>':'<span class="tag">teks saja</span>')+
+  (m.exp?`<span class="tag warn">segera dihapus ${esc(String(m.exp))}</span>`:'')+'</div>'}).join(''):'<div class="mrow">Tidak ada model yang cocok.</div>';
+ $('mbox').querySelectorAll('.mrow[data-id]').forEach(r=>r.onclick=()=>choose(r.dataset.id));
+ $('mcount').textContent=LIST.length+' model gambar dimuat, '+arr.length+' ditampilkan. Harga dari OpenRouter; tarif per megapixel (/MP) kira-kira 1 MP per gambar 1:1.';
+}
+const PRESETS=[
+ ['Recraft V4.1 Flash V2 (free)','GRATIS · dihapus 28 Nov 2026','recraftv41flashv2free',null,1],
+ ['Recraft V4.1 Flash V2','$0.007/gambar','recraftv41flashv2'],
+ ['FLUX 3 Image Klein','mulai $0.008/gambar','flux3imageklein'],
+ ['FLUX.2 Klein 4B','$0.014/megapixel','flux2klein4b'],
+ ['Krea 2 Medium Turbo','mulai $0.015/gambar','krea2mediumturbo'],
+ ['Seedream 5.0 Flash','mulai $0.018/gambar','seedream50flash'],
+ ['Seedream 5.5','mulai $0.02/gambar','seedream55'],
+ ['Riverflow V2 Fast','mulai $0.02/gambar','riverflowv2fast'],
+ ['Nano Banana 2 Lite','$0.25/M input','nanobanana2lite'],
+ ['Nano Banana (Gemini 2.5 Flash)','$0.30/M input','nanobananagemini25flashimage','google/gemini-2.5-flash-image'],
+ ['Nano Banana 2','$0.50/M in · $60/M out','nanobanana2gemini31flashimage'],
+ ['Nano Banana 2.1','$1.50/M in · $30/M out','nanobanana21'],
+ ['Hy Image 3.5 Preview','$1.60/M token','hyimage35preview'],
+ ['GPT Image 2.5 Flare','$8/M in · $30/M out','gptimage25flare'],
+ ['GPT Image 2.5 Sunburst','$8/M in · $30/M out','gptimage25sunburst'],
+ ['GPT Image 2.6 Sunburst','$8/M in · $30/M out','gptimage26sunburst']
+];
+const norm=t=>String(t).toLowerCase().replace(/[^a-z0-9]/g,'');
+function presetId(p){
+ const eq=LIST.find(m=>norm(m.name)===p[2]||norm(m.name.replace(/^[^:]*:/,''))===p[2]);
+ if(eq) return eq.id;
+ const inc=LIST.filter(m=>norm(m.name).includes(p[2]));
+ if(inc.length===1) return inc[0].id;
+ return p[3]||null;
+}
+function renderPresets(){
+ const cur=$('model').value.trim();
+ $('chips').innerHTML=PRESETS.map((p,i)=>{const id=presetId(p);
+  return `<button type="button" class="chip${id?'':' off'}${id&&id===cur?' sel':''}${p[4]?' free':''}" data-i="${i}" ${id?'':'disabled'}><b>${esc(p[0])}</b><span>${esc(p[1])}${id?'':' · tidak ditemukan'}</span></button>`}).join('');
+ $('chips').querySelectorAll('.chip:not(.off)').forEach(b=>b.onclick=()=>{const id=presetId(PRESETS[b.dataset.i]);if(id)choose(id)});
+}
+function choose(id){$('model').value=id;store.set('fs_or_model',id);render()}
+async function loadPrices(){
+ const todo=LIST.slice(); let n=0;
+ const w=async()=>{while(todo.length){const m=todo.shift();
+  try{const r=await fetch('https://openrouter.ai/api/v1/images/models/'+m.id+'/endpoints');
+   if(r.ok){const out=[];walk(await r.json(),out);
+    const o=out.filter(x=>x.billable==='output_image'&&typeof x.cost_usd==='number'&&(x.unit==='image'||x.unit==='megapixel'));
+    if(o.length){const bestp=o.sort((a,b)=>(a.unit==='megapixel'?a.cost_usd*1.05:a.cost_usd)-(b.unit==='megapixel'?b.cost_usd*1.05:b.cost_usd))[0];m.price=bestp.cost_usd;m.unit=bestp.unit}}
+  }catch(e){}
+  m.pdone=true; if(++n%6===0) render();}};
+ await Promise.all([w(),w(),w(),w(),w(),w()]);
+ try{const r=await fetch('https://openrouter.ai/api/v1/models?output_modalities=image');const j=await r.json();
+  (j.data||[]).forEach(x=>{const m=LIST.find(y=>y.id===x.id);if(m&&m.price==null&&x.pricing){const pi=+x.pricing.prompt*1e6,po=+x.pricing.completion*1e6;if(isFinite(pi)&&isFinite(po)&&(pi||po))m.tok='$'+fmt(pi)+'/M in · $'+fmt(po)+'/M out'}
+   if(m&&x.expiration_date&&!m.exp)m.exp=x.expiration_date})}catch(e){}
+ LIST.forEach(m=>m.pdone=true); render();
+}
+async function loadModels(){
+ $('rec').textContent='Memuat daftar model…';
+ try{
+  const r=await fetch('https://openrouter.ai/api/v1/images/models');
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const j=await r.json();
+  LIST=(j.data||[]).filter(m=>m&&m.id).map(m=>({id:m.id,name:m.name||m.id,inp:((m.architecture||{}).input_modalities)||['text'],exp:m.expiration_date||null,price:null,unit:null,tok:null}));
+  if(!LIST.length) throw new Error('daftar kosong');
+  LIST.forEach(m=>MODELS[m.id]={inp:m.inp});
+  render(); loadPrices();
+ }catch(e){
+  LIST=FALLBACK.map(m=>Object.assign({},m,{pdone:true}));LIST.forEach(m=>MODELS[m.id]={inp:m.inp});render();
+  $('mcount').textContent='Gagal memuat daftar ('+e.message+'). Memakai daftar bawaan. Buka file ini langsung di browser, atau ketik ID model manual.';
+ }
+}
+$('mq').oninput=render;$('msort').onchange=render;$('onlyRef').onchange=render;
+$('model').oninput=()=>{store.set('fs_or_model',$('model').value.trim());render()};
+loadModels();
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function showPrompts(ps){
+ $('prsec').style.display='block';
+ $('prs').innerHTML=ps.map((x,i)=>`<div class="pr"><b>${i+1}. ${x.t}</b>${esc(x.p)}<br><button data-i="${i}">Salin prompt</button></div>`).join('');
+ $('prs').querySelectorAll('button').forEach(bt=>bt.onclick=async()=>{
+  try{await navigator.clipboard.writeText(ps[bt.dataset.i].p);bt.textContent='Tersalin ✓'}catch(e){bt.textContent='Tahan teks lalu salin manual'}
+ });
+}
+async function genImage(prompt,key,model){
+ const info=MODELS[model]||{inp:['image']};
+ const body={model,prompt,aspect_ratio:$('ratio').value,n:1};
+ if(photo&&info.inp.includes('image')) body.input_references=[{type:'image_url',image_url:{url:`data:${photo.mime};base64,${photo.data}`}}];
+ const r=await fetch('https://openrouter.ai/api/v1/images',{
+  method:'POST',
+  headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'X-Title':'Feed Studio'},
+  body:JSON.stringify(body)
+ });
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok||j.error) throw new Error((j.error&&(j.error.message||JSON.stringify(j.error)))||('HTTP '+r.status));
+ const d=j.data&&j.data[0];
+ if(d&&d.b64_json) return `data:${d.media_type||'image/png'};base64,${d.b64_json}`;
+ if(d&&d.url) return d.url;
+ throw new Error('Model tidak mengembalikan gambar. Coba lagi atau pilih model lain.');
+}
+function setTile(el,state,src,i,ps,key,model){
+ if(state==='load'){el.innerHTML='<div class="sp"></div>';return}
+ if(state==='err'){el.innerHTML='Gagal<br>ketuk untuk ulang';el.style.cursor='pointer';el.onclick=()=>run1(el,i,ps,key,model);return}
+ el.onclick=null;el.style.cursor='';
+ el.innerHTML=`<img src="${src}"><div class="bar"><button data-a="re">Ulang</button><button data-a="dl">Unduh</button></div>`;
+ el.querySelector('[data-a=re]').onclick=()=>run1(el,i,ps,key,model);
+ el.querySelector('[data-a=dl]').onclick=()=>{try{const a=document.createElement('a');a.href=src;a.download=`feed-${i+1}.png`;a.click()}catch(e){}};
+}
+let lastErr='';
+async function run1(el,i,ps,key,model){
+ setTile(el,'load');
+ try{const src=await genImage(ps[i].p,key,model);setTile(el,'ok',src,i,ps,key,model);return true}
+ catch(e){lastErr=e.message;setTile(el,'err',null,i,ps,key,model);return false}
+}
+
+function upd(){const n=$('count').value;$('go').textContent='⚡ Generate '+n+' Feed';$('pill').textContent=n+' Feed Konsisten'}
+$('count').onchange=upd;$('ratio').onchange=upd;upd();
+$('go').onclick=async()=>{
+ const m=$('msg'); m.className='msg'; m.textContent='';
+ const ps=buildPrompts(); showPrompts(ps);
+ const key=$('key').value.trim(), model=$('model').value.trim()||'google/gemini-2.5-flash-image';
+ store.set('fs_or_key',key);store.set('fs_or_model',model);
+ const g=$('grid'); g.innerHTML='';
+ g.style.setProperty('--ar',$('ratio').value.replace(':','/'));
+ g.style.gridTemplateColumns='repeat('+(ps.length===1?1:($('ratio').value==='16:9'?2:3))+',1fr)';
+ if(!key){m.textContent='Belum ada API key. Prompt siap salin ada di bawah. Isi key di Pengaturan untuk generate gambar langsung.';return}
+ if(!photo){m.className='msg err';m.textContent='Upload foto produk dulu agar hasilnya konsisten.';return}
+ const tiles=ps.map(()=>{const d=document.createElement('div');d.className='tile';g.appendChild(d);return d});
+ $('go').disabled=true; m.textContent='Membuat '+ps.length+' feed… biasanya 1–3 menit.'+((MODELS[model]&&!MODELS[model].inp.includes('image'))?' Catatan: model ini tidak menerima foto referensi, jadi foto produk diabaikan.':'');
+ let ok=0,i=0;
+ const worker=async()=>{while(i<ps.length){const k=i++;if(await run1(tiles[k],k,ps,key,model))ok++;}};
+ await Promise.all([worker(),worker(),worker()]);
+ $('go').disabled=false;
+ if(ok===0){m.className='msg err';m.textContent='Gagal: '+lastErr+(/fetch|network|Failed/i.test(lastErr)?' (Browser/halaman ini mungkin memblokir koneksi ke OpenRouter. Buka file .html langsung di browser, atau pakai prompt di bawah.)':'')}
+ else if(ok<ps.length){m.className='msg err';m.textContent=`${ok}/${ps.length} berhasil. Ketuk kotak yang gagal untuk mengulang. Error terakhir: ${lastErr}`}
+ else m.textContent='Selesai. Ketuk Ulang pada feed yang kurang pas.';
+};
+</script>
+</body>
+</html>
